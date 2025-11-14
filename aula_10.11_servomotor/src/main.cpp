@@ -1,29 +1,28 @@
 #include <Arduino.h>
 #include <Servo.h>
-// #include <ArduinoJson.h>
-// #include <BluetoothSerial.h>
-// #include <cmath>
+#include <ArduinoJson.h>
+#include <BluetoothSerial.h>
+#include <cmath>
 
-// BluetoothSerial bt;
-// JsonDocument doc;
+BluetoothSerial bt;
+JsonDocument doc;
 Servo servo;
 float gasAnterior;
+bool aberto = false;
 
-#define pinServo 33
+#define pinServo 32
 
 void porta(bool abrir) {
 
   if (abrir) {
     for (int i = 1; i < 179; i += 2) {
       servo.write(i);
-      delay(15);
     }
   }
 
   else if (!abrir) {
     for (int i = 179; i > 1; i -= 2) {
       servo.write(i);
-      delay(15);
     }
   }
 
@@ -31,12 +30,14 @@ void porta(bool abrir) {
 
 void setup() {
 
-  // Serial.begin(9600);
+  Serial.begin(9600);
 
-  // if (bt.begin("espSlave Luccas")) {
-  //   Serial.println("Endereço: " + bt.getBtAddressString());
-  // }
-  // else Serial.println("Erro ao iniciar o bluetooth");
+  pinMode(12, OUTPUT);
+
+  if (bt.begin("espSlave Luccas")) {
+    Serial.println("Endereço: " + bt.getBtAddressString());
+  }
+  else Serial.println("Erro ao iniciar o bluetooth");
 
   servo.attach(pinServo);
   servo.write(90);
@@ -45,34 +46,35 @@ void setup() {
 
 void loop() {
 
-  // String mensagemRecebida = bt.readStringUntil('\n');
-  // mensagemRecebida.trim();
+  String mensagemRecebida = bt.readStringUntil('\n');
+  mensagemRecebida.trim();
 
-  // DeserializationError error = deserializeJson(doc, mensagemRecebida);
+  if (mensagemRecebida.equals("")) return;
 
-  // if (error) {
-  //   Serial.println("Erro ao ler Json");
-  //   Serial.println(error.c_str());
-  //   return;
-  // }
+  DeserializationError error = deserializeJson(doc, mensagemRecebida);
 
-  // float gas = doc["gas"];
+  if (error) {
+    Serial.println("Erro ao ler Json");
+    Serial.println(error.c_str());
+    return;
+  }
+
+  float gas = doc["gas"];
   
-  // if (300 >= abs(gas - gasAnterior)) {
-  //   if (gas >= 2500) {
-  //     porta(true);
-  //     Serial.println("abrir servo");
-  //   }
-  //   else {
-  //     porta(false);
-  //     Serial.println("fechar servo");
-  //   }
-  // }
+  if (300 >= abs(gas - gasAnterior)) {
+    if (gas >= 2500 && !aberto) {
+      porta(true);
+      Serial.println("abrir servo");
+      aberto = true;
+      digitalWrite(12, 1);
+    }
+    else if (gas < 2500 && aberto){
+      porta(false);
+      Serial.println("fechar servo");
+      aberto = false;
+      digitalWrite(12, 0);
+    }
+  }
 
-  // gasAnterior = gas;
-  
-  porta(true);
-  delay(2000); 
-  porta(false);
-  delay(2000); 
+  gasAnterior = gas;
 }
