@@ -53,6 +53,8 @@ void loop() {
 
   if (mensagemRecebida.equals("")) return;
 
+  Serial.println(mensagemRecebida);
+
   DeserializationError error = deserializeJson(doc, mensagemRecebida);
 
   if (error) {
