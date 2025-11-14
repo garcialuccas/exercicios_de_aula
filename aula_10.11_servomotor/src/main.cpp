@@ -17,12 +17,14 @@ void porta(bool abrir) {
   if (abrir) {
     for (int i = 1; i < 179; i += 2) {
       servo.write(i);
+      delay(15);
     }
   }
 
   else if (!abrir) {
     for (int i = 179; i > 1; i -= 2) {
       servo.write(i);
+      delay(15);
     }
   }
 
