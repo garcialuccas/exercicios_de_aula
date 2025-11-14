@@ -42,7 +42,7 @@ void setup() {
   else Serial.println("Erro ao iniciar o bluetooth");
 
   servo.attach(pinServo);
-  servo.write(90);
+  servo.write(1);
 
 }
 
@@ -63,7 +63,7 @@ void loop() {
 
   float gas = doc["gas"];
   
-  if (300 >= abs(gas - gasAnterior)) {
+  if (300 <= abs(gas - gasAnterior)) {
     if (gas >= 2500 && !aberto) {
       porta(true);
       Serial.println("abrir servo");
