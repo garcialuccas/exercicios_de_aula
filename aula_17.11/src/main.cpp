@@ -51,7 +51,7 @@ void setup() {
   lcd.init();
   lcd.backlight();
   lcd.setCursor(0, 3);
-  lcd.print("alarme");
+  lcd.print("    alarme 08:00");
 
 }
 
@@ -60,7 +60,7 @@ void loop() {
   botao.update();
 
   lcd.setCursor(0, 3);
-  lcd.print("   alarme ");
+  lcd.print("    alarme ");
 
   reconectarWifi();
 
@@ -184,16 +184,16 @@ void atualizarData(String tempo, String tempoAnterior, int x, int y) {
   if (!tempo.equals(tempoAnterior)) {
     lcd.setCursor(2, 1);
     lcd.print("                           ");
-    lcd.setCursor(2, 1);
+    lcd.setCursor(3, 1);
     lcd.print(tempo);
   }
 }
 
 void atualizarAlarme(String h, String m) {
 
-  lcd.setCursor(10, 3);
+  lcd.setCursor(11, 3);
   lcd.print(h + ":");
-  lcd.setCursor(13, 3);
+  lcd.setCursor(14, 3);
   lcd.print(m);
 
 }
@@ -206,7 +206,7 @@ String formatarData(String d, String m, String y) {
   m = meses[m.toInt() - 1];
   d = dias[d.toInt() - 1];
 
-  String dataf = d + " de " + m + " de " + y;
+  String dataf = d + ", " + m + " de " + y;
 
   return dataf;
 
